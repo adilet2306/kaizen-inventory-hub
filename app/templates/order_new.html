@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Create Order · Kaizen Inventory Hub{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">Sales</p><h1>Create order</h1><p>The browser form creates one line item; the REST API supports multiple items.</p></div></div>
+<form class="panel form-grid" method="post" action="/orders">
+  <label>Customer name<input name="customer_name" required maxlength="160"></label>
+  <label>Customer email<input name="customer_email" required type="email"></label>
+  <label class="full">Product<select name="product_id" required>{% for product in products %}<option value="{{ product.id }}">{{ product.sku }} — {{ product.name }} ({{ product.quantity }} available)</option>{% endfor %}</select></label>
+  <label>Quantity<input name="quantity" required type="number" min="1" value="1"></label>
+  <div class="full actions"><button class="button" type="submit">Place order</button><a class="button button-secondary" href="/orders">Cancel</a></div>
+</form>
+{% endblock %}

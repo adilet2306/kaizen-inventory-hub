@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: inventory_hub
+      POSTGRES_USER: inventory_app
+      POSTGRES_PASSWORD: inventory_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inventory_app -d inventory_hub"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    environment:
+      APP_ENV: docker
+      SECRET_KEY: docker-development-secret
+      DATABASE_URL: postgresql+psycopg://inventory_app:inventory_password@db:5432/inventory_hub
+      ALERT_BACKEND: console
+      PORT: 8000
+    command: >-
+      sh -c "python -m alembic upgrade head &&
+             python -m app.seed &&
+             python -m uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres-data:

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Kaizen Inventory Hub{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div>
+    <p class="eyebrow">Operations overview</p>
+    <h1>Inventory dashboard</h1>
+    <p>Track stock, inventory value, customer orders, and products that need attention.</p>
+  </div>
+  <div class="actions">
+    <a class="button" href="/products/new">Add product</a>
+    <a class="button button-secondary" href="/orders/new">Create order</a>
+  </div>
+</div>
+
+<section class="stats-grid">
+  <article class="stat-card"><span>Products</span><strong>{{ products|length }}</strong></article>
+  <article class="stat-card"><span>Units in stock</span><strong>{{ total_units }}</strong></article>
+  <article class="stat-card"><span>Inventory value</span><strong>{{ inventory_value|money }}</strong></article>
+  <article class="stat-card"><span>Orders</span><strong>{{ order_count }}</strong></article>
+</section>
+
+<section class="split-grid">
+  <article class="panel">
+    <div class="panel-heading">
+      <div><p class="eyebrow">Attention required</p><h2>Low stock</h2></div>
+      <a href="/reports/low-stock.csv">Download CSV</a>
+    </div>
+    {% if low_stock %}
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>SKU</th><th>Product</th><th>On hand</th><th>Reorder at</th></tr></thead>
+          <tbody>
+          {% for product in low_stock %}
+            <tr>
+              <td><a href="/products/{{ product.id }}">{{ product.sku }}</a></td>
+              <td>{{ product.name }}</td>
+              <td><span class="badge badge-danger">{{ product.quantity }}</span></td>
+              <td>{{ product.reorder_level }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="empty-state">All active products are above their reorder levels.</p>
+    {% endif %}
+  </article>
+
+  <article class="panel">
+    <div class="panel-heading"><div><p class="eyebrow">Latest activity</p><h2>Recent orders</h2></div></div>
+    {% if recent_orders %}
+      <ul class="activity-list">
+      {% for order in recent_orders %}
+        <li>
+          <div><a href="/orders/{{ order.id }}">Order #{{ order.id }}</a><span>{{ order.customer_name }}</span></div>
+          <strong>{{ order.total_amount|money }}</strong>
+        </li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p class="empty-state">No orders have been placed yet.</p>
+    {% endif %}
+  </article>
+</section>
+
+<section class="panel">
+  <div class="panel-heading"><div><p class="eyebrow">Current catalog</p><h2>Products</h2></div><a href="/products">View all</a></div>
+  <div class="product-grid">
+    {% for product in products %}
+      <a class="product-card" href="/products/{{ product.id }}">
+        <div><span class="sku">{{ product.sku }}</span><h3>{{ product.name }}</h3></div>
+        <div class="product-meta"><span>{{ product.unit_price|money }}</span><strong class="{% if product.is_low_stock %}danger{% endif %}">{{ product.quantity }} units</strong></div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

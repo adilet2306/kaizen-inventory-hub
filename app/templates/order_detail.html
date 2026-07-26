@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.id }} · Kaizen Inventory Hub{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">Order #{{ order.id }}</p><h1>{{ order.customer_name }}</h1><p>{{ order.customer_email }}</p></div><div class="metric-block"><span>Total</span><strong>{{ order.total_amount|money }}</strong><small>{{ order.status }}</small></div></div>
+<section class="panel table-wrap">
+  <table>
+    <thead><tr><th>SKU</th><th>Product</th><th>Quantity</th><th>Unit price</th><th>Line total</th></tr></thead>
+    <tbody>
+    {% for item in order.items %}
+      <tr><td><a href="/products/{{ item.product.id }}">{{ item.product.sku }}</a></td><td>{{ item.product.name }}</td><td>{{ item.quantity }}</td><td>{{ item.unit_price|money }}</td><td>{{ item.line_total|money }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

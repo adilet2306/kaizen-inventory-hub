@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Add Product · Kaizen Inventory Hub{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">Catalog</p><h1>Add product</h1><p>Create a SKU and its opening inventory balance.</p></div></div>
+<form class="panel form-grid" method="post" action="/products">
+  <label>SKU<input name="sku" required maxlength="64" placeholder="MONITOR-27"></label>
+  <label>Product name<input name="name" required maxlength="160" placeholder="27-inch Monitor"></label>
+  <label class="full">Description<textarea name="description" rows="4" placeholder="Product details"></textarea></label>
+  <label>Unit price<input name="unit_price" required type="number" min="0" step="0.01" value="0.00"></label>
+  <label>Opening quantity<input name="quantity" required type="number" min="0" value="0"></label>
+  <label>Reorder level<input name="reorder_level" required type="number" min="0" value="5"></label>
+  <div class="full actions"><button class="button" type="submit">Create product</button><a class="button button-secondary" href="/products">Cancel</a></div>
+</form>
+{% endblock %}

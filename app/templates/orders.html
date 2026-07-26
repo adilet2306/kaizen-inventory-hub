@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Orders · Kaizen Inventory Hub{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">Sales</p><h1>Orders</h1><p>Every placed order reduces inventory transactionally.</p></div><a class="button" href="/orders/new">Create order</a></div>
+<div class="panel table-wrap">
+  <table>
+    <thead><tr><th>Order</th><th>Customer</th><th>Email</th><th>Status</th><th>Total</th><th>Created</th></tr></thead>
+    <tbody>
+    {% for order in orders %}
+      <tr><td><a href="/orders/{{ order.id }}">#{{ order.id }}</a></td><td>{{ order.customer_name }}</td><td>{{ order.customer_email }}</td><td><span class="badge">{{ order.status }}</span></td><td>{{ order.total_amount|money }}</td><td>{{ order.created_at }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

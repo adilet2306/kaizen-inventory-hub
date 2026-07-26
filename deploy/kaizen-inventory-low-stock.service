@@ -1,0 +1,14 @@
+[Unit]
+Description=Kaizen Inventory Hub Low-Stock Notification Check
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=inventory
+Group=inventory
+WorkingDirectory=/opt/kaizen-inventory-hub
+EnvironmentFile=/etc/kaizen-inventory-hub/inventory.env
+ExecStart=/opt/kaizen-inventory-hub/.venv/bin/python -m app.notify_low_stock
+NoNewPrivileges=true
+PrivateTmp=true

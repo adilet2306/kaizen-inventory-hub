@@ -1,0 +1,22 @@
+[Unit]
+Description=Kaizen Inventory Hub Web Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=inventory
+Group=inventory
+WorkingDirectory=/opt/kaizen-inventory-hub
+EnvironmentFile=/etc/kaizen-inventory-hub/inventory.env
+ExecStart=/opt/kaizen-inventory-hub/.venv/bin/gunicorn -c /opt/kaizen-inventory-hub/gunicorn.conf.py app.main:app
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

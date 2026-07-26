@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ product.sku }} · Kaizen Inventory Hub{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div><p class="eyebrow">{{ product.sku }}</p><h1>{{ product.name }}</h1><p>{{ product.description or "No description provided." }}</p></div>
+  <div class="metric-block"><span>On hand</span><strong class="{% if product.is_low_stock %}danger{% endif %}">{{ product.quantity }}</strong><small>Reorder at {{ product.reorder_level }}</small></div>
+</div>
+<section class="split-grid">
+  <article class="panel">
+    <p class="eyebrow">Inventory control</p><h2>Adjust stock</h2>
+    <form class="form-grid" method="post" action="/products/{{ product.id }}/adjust">
+      <label>Quantity change<input name="quantity_delta" type="number" required placeholder="10 or -2"></label>
+      <label>Movement type<select name="movement_type"><option value="restock">Restock</option><option value="adjustment">Adjustment</option><option value="return">Return</option><option value="damage">Damage</option></select></label>
+      <label>Reference<input name="reference" maxlength="120" placeholder="PO-1005"></label>
+      <label class="full">Note<textarea name="note" rows="3"></textarea></label>
+      <div class="full"><button class="button" type="submit">Apply adjustment</button></div>
+    </form>
+  </article>
+  <article class="panel">
+    <p class="eyebrow">Product details</p><h2>Summary</h2>
+    <dl class="details-list">
+      <div><dt>Unit price</dt><dd>{{ product.unit_price|money }}</dd></div>
+      <div><dt>Inventory value</dt><dd>{{ (product.unit_price * product.quantity)|money }}</dd></div>
+      <div><dt>Status</dt><dd>{% if product.is_low_stock %}<span class="badge badge-danger">Low stock</span>{% else %}<span class="badge badge-success">Healthy</span>{% endif %}</dd></div>
+      <div><dt>Created</dt><dd>{{ product.created_at }}</dd></div>
+    </dl>
+  </article>
+</section>
+<section class="panel table-wrap">
+  <div class="panel-heading"><div><p class="eyebrow">Audit trail</p><h2>Inventory movements</h2></div></div>
+  <table>
+    <thead><tr><th>Time</th><th>Type</th><th>Change</th><th>Reference</th><th>Note</th></tr></thead>
+    <tbody>
+    {% for movement in movements %}
+      <tr><td>{{ movement.created_at }}</td><td>{{ movement.movement_type }}</td><td class="{% if movement.quantity_delta < 0 %}danger{% endif %}">{{ "%+d"|format(movement.quantity_delta) }}</td><td>{{ movement.reference or "—" }}</td><td>{{ movement.note or "—" }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
